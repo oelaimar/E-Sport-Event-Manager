@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  php:
+    build: .
+    volumes:
+      - ./src:/app
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: GIGA_LEAGUE_DB
+      MYSQL_USER: app_user
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: app_user
+      PMA_PASSWORD: secret
+    ports:
+      - "8083:80"
+
+volumes:
+  mysql_data:
