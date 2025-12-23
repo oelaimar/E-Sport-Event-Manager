@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(50) NOT NULL,
         city VARCHAR(50) NOT NULL,
-        created_date DATE NOT NULL
+        created_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
@@ -31,7 +31,7 @@ CREATE TABLE
         title VARCHAR(120) NOT NULL,
         format VARCHAR(50),
         total_cashprize DECIMAL(12, 2),
-        tournament_date DATE
+        tournament_date DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL
     );
 
 CREATE TABLE IF NOT EXISTS
