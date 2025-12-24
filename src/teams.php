@@ -61,10 +61,10 @@ class Teams extends Database
     }
 
     //update team from database
-    public function update(string $name, string $game, int $club_id, int $id): bool
+    public function update(string $name, string $game, int $id): bool
     {
-        $sql = "UPDATE team SET name = ?, game = ?, club_id = ? WHERE id = ?;";
+        $sql = "UPDATE team SET name = ?, game = ?, WHERE id = ?;";
         $stmt = $this->connect()->prepare($sql);
-        return $stmt->execute([$name, $game, $club_id, $id]);
+        return $stmt->execute([$name, $game, $id]);
     }
 }

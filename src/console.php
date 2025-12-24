@@ -1,5 +1,5 @@
 <?php
-// src/Console.php
+
 class Console {
     public static function read(string $prompt): string {
         echo $prompt . " : ";
