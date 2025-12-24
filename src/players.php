@@ -54,7 +54,7 @@ class Players extends Database
         return $this->team_id;
     }
 
-    //save club in database
+    //save player in database
     public function save(string $nickname, string $role, float $salary, int $team_id): bool
     {
         $sql = "INSERT INTO player (nickname, role, salary, team_id) VALUES(?, ?, ?, ?);";
@@ -63,7 +63,7 @@ class Players extends Database
         return $stmt->execute([$nickname, $role, $salary, $team_id]);
     }
 
-    //delete club from database
+    //delete player from database
     public function delete(int $id): bool
     {
         $sql = "DELETE FROM player WHERE id = ?;";
@@ -71,7 +71,7 @@ class Players extends Database
         return $stmt->execute([$id]);
     }
 
-    //update club from database
+    //update player from database
     public function update(string $nickname, string $role, float $salary, int $id): bool
     {
         $sql = "UPDATE player SET nickname = ?, role = ?, salary = ? WHERE id = ?;";
