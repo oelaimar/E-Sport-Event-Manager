@@ -6,5 +6,32 @@ require_once "players.php";
 require_once "matches.php";
 require_once "sponsors.php";
 require_once "tournament.php";
+require_once "sponsor_tournament.php";
 
-echo "test\n";
+while (true) {
+    Console::clear();
+    Console::write("=== WELCOME TO VERSUS MANAGER ===\n", "yellow");
+    Console::write("\n\tMENU PRINCIPAL\n", "cyan");
+    echo "\t1. Manage Clubs\n";
+    echo "\t2. Manage Teams\n";
+    echo "\t3. Manage Tournament\n";
+    echo "\t4. See The Statistic\n";
+    Console::write("\t0. exit\n", "red");
+
+    $choice = Console::read((string)Console::write("\tSelect A Choice", "magenta"));
+
+    switch ($choice) {
+        case '1':
+            manageClubs();
+            break;
+        case '2':
+        case '3':
+        case '4':
+        case '0':
+            Console::write("Exiting...\n", "red");
+            exit;
+        default:
+            Console::write("\tOption invalide.\n", "red");
+            break;
+    }
+}

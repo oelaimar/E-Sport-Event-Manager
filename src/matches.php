@@ -13,7 +13,7 @@ class Matches extends Database
         return $stmt->fetchAll();
     }
 
-    public function getById(int $id): void
+    private function getById(int $id): void
     {
         $sql = "SELECT * FROM matches WHERE id = ?";
         $stmt = $this->connect()->prepare($sql);

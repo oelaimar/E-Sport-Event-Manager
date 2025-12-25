@@ -14,7 +14,7 @@ class Sponsors extends Database
         return $stmt->fetchAll();
     }
 
-    public function getById(int $id): void
+    private function getById(int $id): void
     {
         $sql = "SELECT * FROM sponsor WHERE id = ?";
         $stmt = $this->connect()->prepare($sql);
