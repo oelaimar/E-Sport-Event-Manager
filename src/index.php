@@ -25,8 +25,12 @@ while (true) {
             manageClubs();
             break;
         case '2':
+            manageTeams();
+            break;
         case '3':
+            break;
         case '4':
+            break;
         case '0':
             Console::write("Exiting...\n", "red");
             exit;
