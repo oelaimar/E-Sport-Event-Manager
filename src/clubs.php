@@ -74,7 +74,7 @@ class Clubs extends Database
     }
 }
 
-function manageClubs()
+function manageClubs() : void
 {
     $clubObject = new Clubs;
     $allClubs = $clubObject->getAllData();
@@ -99,6 +99,8 @@ function manageClubs()
 
                 if ($clubObject->save($name, $city)) {
                     Console::write("\n\tthe club is saves !\n", "green");
+                }else{
+                    Console::write("\n\tthere is a problem !\n", "red");
                 }
                 Console::read((string)Console::write("\t=== CLICK ENTER TO CONTUNUE ===", "blue"));
                 break;

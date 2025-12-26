@@ -14,8 +14,9 @@ while (true) {
     Console::write("\n\tMENU PRINCIPAL\n", "cyan");
     echo "\t1. Manage Clubs\n";
     echo "\t2. Manage Teams\n";
-    echo "\t3. Manage Tournament\n";
-    echo "\t4. See The Statistic\n";
+    echo "\t3. Manage Players\n";
+    echo "\t4. Manage Tournament\n";
+    echo "\t5. See The Statistic\n";
     Console::write("\t0. exit\n", "red");
 
     $choice = Console::read((string)Console::write("\tSelect A Choice", "magenta"));
@@ -28,6 +29,9 @@ while (true) {
             manageTeams();
             break;
         case '3':
+            managePlayers();
+            break;
+        case '4':
             break;
         case '4':
             break;

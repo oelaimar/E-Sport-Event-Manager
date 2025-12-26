@@ -92,12 +92,11 @@ function manageTeams()
 {
     $teamObject = new Teams;
     $clubObject = new Clubs;
-
-    $allTeams = $teamObject->getAllData();
-    $allClubs = $clubObject->getAllData();
-
-
+     
     while (true) {
+        $allTeams = $teamObject->getAllData();
+        $allClubs = $clubObject->getAllData();
+        
         Console::clear();
         Console::write("=== WELCOME TO VERSUS MANAGER ===\n", "yellow");
         Console::write("\n\tManage Teams\n", "cyan");
@@ -122,7 +121,9 @@ function manageTeams()
                 $clubId = Console::read("\tSelect the club for this team by ID");
 
                 if ($teamObject->save($name, $game, $clubId)) {
-                    Console::write("\n\tthe club is saves !\n", "green");
+                    Console::write("\n\tthe team is saves !\n", "green");
+                }else{
+                    Console::write("\n\tthere is a problem !\n", "red");
                 }
                 Console::read((string)Console::write("\t=== CLICK ENTER TO CONTUNUE ===", "blue"));
                 break;
@@ -157,9 +158,9 @@ function manageTeams()
                 $game = Console::read("\tthe game");
 
                 if ($teamObject->update($name, $game, $id)) {
-                    Console::write("\n\tthe club is updated !\n", "green");
+                    Console::write("\n\tthe team is updated !\n", "green");
                 } else {
-                    Console::write("\n\tthere is a problem you can't updated this club !\n", "red");
+                    Console::write("\n\tthere is a problem you can't updated this team !\n", "red");
                 }
 
                 Console::read((string)Console::write("\t=== CLICK ENTER TO CONTUNUE ===", "blue"));
