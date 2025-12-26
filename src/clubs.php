@@ -77,9 +77,9 @@ class Clubs extends Database
 function manageClubs() : void
 {
     $clubObject = new Clubs;
-    $allClubs = $clubObject->getAllData();
-
+    
     while (true) {
+        $allClubs = $clubObject->getAllData();
         Console::clear();
         Console::write("=== WELCOME TO VERSUS MANAGER ===\n", "yellow");
         Console::write("\n\tManage Clubs\n", "cyan");

@@ -32,8 +32,9 @@ while (true) {
             managePlayers();
             break;
         case '4':
+            manageTournament();
             break;
-        case '4':
+        case '5':
             break;
         case '0':
             Console::write("Exiting...\n", "red");
