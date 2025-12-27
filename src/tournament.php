@@ -73,13 +73,22 @@ class Tournaments extends Database
         return $stmt->execute([$id]);
     }
 
+    public function updateStatus(
+        string $status,
+        int $id
+    ): bool {
+        $sql = "UPDATE tournament SET status = ? WHERE id = ?;";
+        $stmt = $this->connect()->prepare($sql);
+        return $stmt->execute([$status, $id]);
+    }
+
     public function update(
         string $title,
         int $format,
         string $status,
         int $id
     ): bool {
-        $sql = "UPDATE matches SET title = ? , format = ? , status = ? WHERE id = ?;";
+        $sql = "UPDATE tournament SET title = ? , format = ? , status = ? WHERE id = ?;";
         $stmt = $this->connect()->prepare($sql);
         return $stmt->execute([$title, $format, $status, $id]);
     }
@@ -101,8 +110,7 @@ function manageTournament(): void
         echo "\t1. Create A New Tournaments\n";
         echo "\t2. Start A Tournaments\n";
         echo "\t3. Display All Tournaments\n";
-        echo "\t4. Delete A Tournaments\n";
-        echo "\t5. Update A Tournaments\n";
+        echo "\t4. See A Tournaments Result\n";
         Console::write("\t0. Return\n", "red");
 
         $choice = Console::read((string)Console::write("\tSelect A Choice", "magenta"));
@@ -129,11 +137,10 @@ function manageTournament(): void
                         $format = 2;
                         break;
                 }
-                //i use $input to change the data type to float
-                $input = trim(Console::read("\thow much cashprize this tournemant needs"));
-                $total_cashprize = (float)$input;
+
+                $total_cashprize = (float)Console::read("\thow much cashprize this tournemant needs");
                 $status = "upcoming";
-                if ($tournamentsObject->save($title, $format, (float)$total_cashprize, $status)) {
+                if ($tournamentsObject->save($title, $format, $total_cashprize, $status)) {
                     Console::write("\n\tthe club is saves !\n", "green");
                 } else {
                     Console::write("\n\tthere is a problem !\n", "red");
@@ -150,8 +157,10 @@ function manageTournament(): void
                 $tournamentid = Console::read("\tchoose the id of the tournament");
 
                 Console::write("\n--- TEAMS LISTE ---\n", "yellow");
+                $teamIdsArray = [];
                 foreach ($allTeams as $team) {
                     echo "-{$team['id']} {$team['name']} | {$team['game']} | club: ({$team['club_name']})\n";
+                    $teamIdsArray[] = $team['id'];
                 }
 
                 $format = $tournamentsObject->getFormat($tournamentid);
@@ -160,17 +169,19 @@ function manageTournament(): void
                 while ($format > 0) {
                     echo "need to add {$format} \n";
                     $teamId = Console::read("\tchoose teams by id");
-                    if (!in_array($teamId, $teamsIdsParticipants)) {
+                    if (!in_array($teamId, $teamsIdsParticipants) && in_array($teamId, $teamIdsArray)) {
                         $teamsIdsParticipants[] = $teamId;
                         $format--;
                     } else {
-                        Console::write("this team was chossen\n", "red");
+                        Console::write("this team was chossen or not in the list\n", "red");
                     }
                 }
                 shuffle($teamsIdsParticipants);
 
-                generateRandomMaches($teamsIdsParticipants, $tournamentid, $matchesObject, $teamsObject);
-
+                if (generateRandomMaches($teamsIdsParticipants, $tournamentid, $matchesObject, $teamsObject)) {
+                    $status = "finished";
+                    $tournamentsObject->updateStatus($status, $tournamentid);
+                }
                 Console::read((string)Console::write("\t=== CLICK ENTER TO CONTUNUE ===", "blue"));
                 break;
             case '3':
@@ -180,33 +191,28 @@ function manageTournament(): void
                 }
                 Console::read((string)Console::write("\t=== CLICK ENTER TO CONTUNUE ===", "blue"));
                 break;
-            // case '4':
-            //     Console::write("\n--- UPDATE THE CLUBS ---\n", "yellow");
-            //     foreach ($allClubs as $club) {
-            //         echo "-{$club['id']} {$club['name']} ({$club['city']})\n";
-            //     }
+            case '4':
+                Console::write("\n--- LIST OF FINISHED TOURNEMANT ---\n", "yellow");
+                foreach ($alltournaments as $tournament) {
+                    if ($tournament['status'] == "finished")
+                        echo "-{$tournament['id']} {$tournament['title']}\n";
+                }
+                $tournamentid = Console::read("\tchoose the id of the tournament");
 
-            //     $id   = Console::read((string)Console::write("\tSelect The Id Of The Club You Want To Update", "magenta"));
-            //     $name = Console::read("\tthe new name of club");
-            //     $city = Console::read("\tcity");
 
-            //     if ($clubObject->update($name, $city, (int)$id)) {
-            //         Console::write("\n\tthe club is updated !\n", "green");
-            //     } else {
-            //         Console::write("\n\tthere is a problem you can't updated this club !\n", "red");
-            //     }
+                Console::write("\n--- THE RESULT ---\n", "yellow");
+                $matchesArray = $matchesObject->getAllData();
+                $matches = [];
+                foreach ($matchesArray as $matchInTournament) {
+                    if ($tournamentid == $matchInTournament['tournament_id']) {
+                        $matches[] =  $matchInTournament;
+                    }
+                }
+                displayResultOfTournament($matches, $teamsObject);
 
-            //     Console::read((string)Console::write("\t=== CLICK ENTER TO CONTUNUE ===", "blue"));
-            //     break;
-            // case '5':
-            //     $stats = $clubObject->getAllWithStats();
-            //     Console::write("\n--- CLUBS LISTE WITH TEAMS ---\n", "yellow");
-            //     // var_dump($stats);
-            //     foreach ($stats as $row) {
-            //         echo "- {$row['name']} ({$row['city']}) | NUMBER OF TEAMS : {$row['team_total']}\n";
-            //     }
-            //     Console::read((string)Console::write("=== CLICK ENTER TO CONTUNUE ===", "blue"));
-            //     break;
+
+                Console::read((string)Console::write("\t=== CLICK ENTER TO CONTUNUE ===", "blue"));
+                break;
 
             case '0':
                 Console::write("Exiting...\n", "red");
@@ -244,6 +250,32 @@ function generateRandomMaches(array $teams, int $tournamentid, Matches $matchesO
         Console::write("\n");
         return generateRandomMaches($newTeams, $tournamentid, $matchesObject, $teamsObject);
     } else {
-        return false;
+        return true;
     }
+}
+
+function displayResultOfTournament(array $matches, Teams $teamsObject)
+{
+    $newMatches = [];
+
+    for ($i = 0; $i < count($matches); $i++) {
+        if ($i > count($matches) / 2) {
+            $newMatches[] = $matches[$i];
+        } else {
+            $score_team_1 = $matches[$i]['score_team_1'];
+            $score_team_2 = $matches[$i]['score_team_2'];
+
+            $winnerId = $matches[$i]['winner_team_id'];
+
+            Console::write("{$teamsObject->getName($matches[$i]['team_1_id'])}", $matches[$i]['team_1_id'] === $winnerId ? "green" : "red");
+            Console::write(" vs ", "magenta");
+            Console::write("{$teamsObject->getName($matches[$i]['team_2_id'])}", $matches[$i]['team_2_id'] === $winnerId ? "green" : "red");
+            Console::write("\t{$score_team_1} | {$score_team_2} \n", "yallow");
+        }
+    }
+    if (count($newMatches) <= 0) {
+        return true;
+    }
+    Console::write("=================================\n", "blue");
+    return displayResultOfTournament($newMatches, $teamsObject);
 }

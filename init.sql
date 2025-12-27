@@ -131,20 +131,6 @@ INSERT INTO tournament (id, title, format, total_cashprize, status) VALUES
 (3, 'Arab League Invitational', 12, 75000.00, 'finished');
 
 -- =========================
--- MATCHES
--- =========================
-INSERT INTO matches (tournament_id, team_1_id, team_2_id, score_team_1, score_team_2, winner_team_id) VALUES
-(1, 1, 3, 16, 12, 1),
-(1, 5, 8, 14, 16, 8),
-(1, 1, 8, 16, 10, 1),
-
-(2, 2, 7, 13, 9, 2),
-(2, 7, 2, 11, 13, 2),
-
-(3, 3, 5, 2, 1, 3),
-(3, 4, 6, 0, 2, 6);
-
--- =========================
 -- SPONSORS
 -- =========================
 INSERT INTO sponsor (id, name, contribution) VALUES

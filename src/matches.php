@@ -8,7 +8,7 @@ class Matches extends Database
     //return an arr you shoud affict it to a variable
     public function getAllData(): array
     {
-        $sql = "SELECT * FROM matches;";
+        $sql = "SELECT * FROM matches ORDER BY id;";
         $stmt = $this->connect()->query($sql);
         return $stmt->fetchAll();
     }
