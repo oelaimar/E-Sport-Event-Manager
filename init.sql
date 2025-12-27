@@ -67,80 +67,103 @@ CREATE TABLE
         FOREIGN KEY (tournament_id) REFERENCES tournament (id) ON DELETE CASCADE
     );
 
--- =====================
--- CLUBS
--- =====================
-INSERT INTO club (name, city) VALUES
-('Atlas Esports', 'Casablanca'),
-('Rabat Wolves', 'Rabat'),
-('Marrakech Kings', 'Marrakech');
+-- =========================
+-- CLUBS (required by team)
+-- =========================
+INSERT INTO club (id, name, city) VALUES
+(1, 'Atlas Esports', 'Casablanca'),
+(2, 'Rabat Kings', 'Rabat'),
+(3, 'Marrakech Wolves', 'Marrakech'),
+(4, 'Tanger Titans', 'Tanger'),
+(5, 'Fes Dragons', 'Fes');
 
--- =====================
+-- =========================
 -- TEAMS
--- =====================
-INSERT INTO team (name, game, club_id) VALUES
-('Atlas CS', 'Counter-Strike', 1),
-('Atlas Valorant', 'Valorant', 1),
-('Wolves CS', 'Counter-Strike', 2),
-('Kings CS', 'Counter-Strike', 3);
+-- =========================
+INSERT INTO team (id, name, game, club_id) VALUES
+(1, 'Atlas CS', 'CS2', 1),
+(2, 'Atlas Valorant', 'Valorant', 1),
+(3, 'Rabat CS', 'CS2', 2),
+(4, 'Rabat LOL', 'League of Legends', 2),
+(5, 'Wolves CS', 'CS2', 3),
+(6, 'Wolves Dota', 'Dota 2', 3),
+(7, 'Titans Valorant', 'Valorant', 4),
+(8, 'Dragons CS', 'CS2', 5);
 
--- =====================
+-- =========================
 -- PLAYERS
--- =====================
+-- =========================
 INSERT INTO player (nickname, role, salary, team_id) VALUES
-('Ace', 'Sniper', 2500.00, 1),
-('Shadow', 'Entry Fragger', 2200.00, 1),
-('Blaze', 'Support', 2000.00, 1),
+('Ace', 'AWPer', 2500.00, 1),
+('Flash', 'Entry Fragger', 2200.00, 1),
+('Smoke', 'Support', 2000.00, 1),
+('Viper', 'IGL', 2600.00, 1),
 
-('Viper', 'Duelist', 2400.00, 2),
-('Nova', 'Controller', 2100.00, 2),
+('Phoenix', 'Duelist', 2300.00, 2),
+('Shadow', 'Controller', 2100.00, 2),
+('Hunter', 'Initiator', 2150.00, 2),
 
-('WolfX', 'AWPer', 2300.00, 3),
-('Fang', 'Rifler', 2100.00, 3),
+('Lion', 'AWPer', 2400.00, 3),
+('Storm', 'Rifler', 2100.00, 3),
+('Wall', 'Support', 1900.00, 3),
 
-('KingZ', 'IGL', 2600.00, 4),
-('Crown', 'Support', 1900.00, 4);
+('King', 'Top', 2000.00, 4),
+('Mage', 'Mid', 2200.00, 4),
+('Arrow', 'ADC', 2100.00, 4),
+('Shield', 'Support', 1800.00, 4),
 
--- =====================
+('Wolf', 'Carry', 2600.00, 6),
+('Fang', 'Mid', 2400.00, 6),
+('Tank', 'Offlane', 2300.00, 6),
+
+('Spark', 'Duelist', 2250.00, 7),
+('Ice', 'Sentinel', 2050.00, 7),
+
+('Dragon', 'AWPer', 2550.00, 8),
+('Scale', 'Support', 1950.00, 8);
+
+-- =========================
 -- TOURNAMENTS
--- format = 2 / 4 / 8 / 16
--- =====================
-INSERT INTO tournament (title, format, total_cashprize, status) VALUES
-('Morocco CS Duel', 2, 5000.00, 'upcoming'),
-('Rabat CS Cup', 4, 12000.00, 'ongoing'),
-('Atlas Championship', 8, 30000.00, 'finished'),
-('National Esports League', 16, 100000.00, 'upcoming');
+-- =========================
+INSERT INTO tournament (id, title, format, total_cashprize, status) VALUES
+(1, 'Morocco CS Championship', 16, 50000.00, 'upcoming'),
+(2, 'North Africa Valorant Cup', 8, 30000.00, 'upcoming'),
+(3, 'Arab League Invitational', 12, 75000.00, 'finished');
 
--- =====================
+-- =========================
 -- MATCHES
--- =====================
-INSERT INTO matches (
-    tournament_id,
-    team_1_id,
-    team_2_id,
-    score_team_1,
-    score_team_2,
-    winner_team_id
-) VALUES
-(2, 1, 3, 16, 12, 1),
-(2, 2, 4, 10, 16, 4),
+-- =========================
+INSERT INTO matches (tournament_id, team_1_id, team_2_id, score_team_1, score_team_2, winner_team_id) VALUES
+(1, 1, 3, 16, 12, 1),
+(1, 5, 8, 14, 16, 8),
+(1, 1, 8, 16, 10, 1),
 
-(3, 1, 4, 14, 16, 4),
-(3, 3, 2, 16, 8, 3);
+(2, 2, 7, 13, 9, 2),
+(2, 7, 2, 11, 13, 2),
 
--- =====================
+(3, 3, 5, 2, 1, 3),
+(3, 4, 6, 0, 2, 6);
+
+-- =========================
 -- SPONSORS
--- =====================
-INSERT INTO sponsor (name, contribution) VALUES
-('Red Bull', 25000.00),
-('Intel', 40000.00),
-('HyperX', 15000.00);
+-- =========================
+INSERT INTO sponsor (id, name, contribution) VALUES
+(1, 'Red Bull', 30000.00),
+(2, 'Intel', 25000.00),
+(3, 'NVIDIA', 40000.00),
+(4, 'Logitech', 20000.00);
 
--- =====================
+-- =========================
 -- SPONSOR ↔ TOURNAMENT
--- =====================
+-- =========================
 INSERT INTO sponsor_tournament (sponsor_id, tournament_id, contribution) VALUES
-(1, 2, 8000.00),
-(2, 3, 20000.00),
-(3, 3, 10000.00),
-(2, 4, 40000.00);
+(1, 1, 15000.00),
+(2, 1, 10000.00),
+(4, 1, 5000.00),
+
+(3, 3, 30000.00),
+(1, 3, 20000.00),
+
+(2, 2, 15000.00),
+(4, 2, 8000.00);
+

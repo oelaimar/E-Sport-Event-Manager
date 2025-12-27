@@ -144,12 +144,12 @@ function manageTournament(): void
                 Console::write("\n--- START A TOURNEMANT ---\n", "yellow");
                 Console::write("\n--- LIST OF UPCOMING TOURNEMANT ---\n", "yellow");
                 foreach ($alltournaments as $tournament) {
-                    if($tournament['status'] == "upcoming")
-                    echo "-{$tournament['id']} {$tournament['title']}\n";
+                    if ($tournament['status'] == "upcoming")
+                        echo "-{$tournament['id']} {$tournament['title']}\n";
                 }
                 $tournamentid = Console::read("\tchoose the id of the tournament");
 
-                 Console::write("\n--- TEAMS LISTE ---\n", "yellow");
+                Console::write("\n--- TEAMS LISTE ---\n", "yellow");
                 foreach ($allTeams as $team) {
                     echo "-{$team['id']} {$team['name']} | {$team['game']} | club: ({$team['club_name']})\n";
                 }
@@ -157,34 +157,29 @@ function manageTournament(): void
                 $format = $tournamentsObject->getFormat($tournamentid);
                 $teamsIdsParticipants = [];
 
-                while($format > 0){
+                while ($format > 0) {
                     echo "need to add {$format} \n";
                     $teamId = Console::read("\tchoose teams by id");
-                    $teamsIdsParticipants[] = $teamId;
-                    $format--;
+                    if (!in_array($teamId, $teamsIdsParticipants)) {
+                        $teamsIdsParticipants[] = $teamId;
+                        $format--;
+                    } else {
+                        Console::write("this team was chossen\n", "red");
+                    }
                 }
                 shuffle($teamsIdsParticipants);
 
-                foreach($teamsIdsParticipants as $team){
-
-                }
-
+                generateRandomMaches($teamsIdsParticipants, $tournamentid, $matchesObject, $teamsObject);
 
                 Console::read((string)Console::write("\t=== CLICK ENTER TO CONTUNUE ===", "blue"));
                 break;
-            // case '3':
-            //     Console::write("\n--- DELETE CLUBS ---\n", "yellow");
-            //     foreach ($allClubs as $club) {
-            //         echo "-{$club['id']} {$club['name']} ({$club['city']})\n";
-            //     }
-            //     $id = Console::read((string)Console::write("\tSelect The Id Of The Club You Want To Delete", "magenta"));
-            //     if ($clubObject->delete((int)$id)) {
-            //         Console::write("\n\tthe club is deleted !\n", "green");
-            //     } else {
-            //         Console::write("\n\tthere is a problem you can't delete this club !\n", "red");
-            //     }
-            //     Console::read((string)Console::write("\t=== CLICK ENTER TO CONTUNUE ===", "blue"));
-            //     break;
+            case '3':
+                Console::write("\n--- LIST TOURNEMANT ---\n", "yellow");
+                foreach ($alltournaments as $tournament) {
+                    echo "-{$tournament['id']} {$tournament['title']}\n";
+                }
+                Console::read((string)Console::write("\t=== CLICK ENTER TO CONTUNUE ===", "blue"));
+                break;
             // case '4':
             //     Console::write("\n--- UPDATE THE CLUBS ---\n", "yellow");
             //     foreach ($allClubs as $club) {
@@ -227,10 +222,28 @@ function manageTournament(): void
 }
 
 
-function generateRandomMaches(array $teams)
+function generateRandomMaches(array $teams, int $tournamentid, Matches $matchesObject, Teams $teamsObject)
 {
-    for($i=0; $i<count($teams); $i=+2){
-        // $teams[i] 
+    $newTeams = [];
+    if (count($teams) > 1) {
+
+        for ($i = 0; $i < count($teams); $i += 2) {
+            $score_team_1 = random_int(0, 100);
+            $score_team_2 = random_int(0, 100);
+
+            $winnerId = $score_team_1 > $score_team_2 ? $teams[$i] : $teams[$i + 1];
+
+            $matchesObject->save($tournamentid, $teams[$i], $teams[$i + 1], $score_team_1, $score_team_2, $winnerId);
+
+            Console::write("{$teamsObject->getName($teams[$i])}", $teams[$i] === $winnerId ? "green" : "red");
+            Console::write(" vs ", "magenta");
+            Console::write("{$teamsObject->getName($teams[$i + 1])}", $teams[$i + 1] === $winnerId ? "green" : "red");
+            Console::write(" | ", "yallow");
+            $newTeams[] = $winnerId;
+        }
+        Console::write("\n");
+        return generateRandomMaches($newTeams, $tournamentid, $matchesObject, $teamsObject);
+    } else {
+        return false;
     }
-return generateRandomMaches($teams);
 }
